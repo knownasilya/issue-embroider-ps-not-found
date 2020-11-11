@@ -1,10 +1,27 @@
-'use strict';
+"use strict";
 
-const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+const EmberApp = require("ember-cli/lib/broccoli/ember-app");
+const tailwind = require("tailwindcss");
+const postcssNested = require("postcss-nested");
+const postcssImport = require("postcss-import");
+const autoprefixer = require("autoprefixer");
 
-module.exports = function(defaults) {
+const plugins = {
+  before: [postcssNested()],
+  after: [
+    postcssImport({
+      path: ["node_modules"],
+    }),
+    tailwind("./app/tailwind/config.js"),
+    autoprefixer("last 2 versions"),
+  ],
+};
+
+module.exports = function (defaults) {
   let app = new EmberApp(defaults, {
-    // Add options here
+    cssModules: {
+      plugins: plugins,
+    },
   });
 
   // Use `app.import` to add additional libraries to the generated
@@ -20,5 +37,14 @@ module.exports = function(defaults) {
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
 
-  return app.toTree();
+  // Testing embroider compat, if broken uncomment the next line and comment out the existing return
+  // return app.toTree();
+
+  const { Webpack } = require("@embroider/webpack");
+  return require("@embroider/compat").compatBuild(app, Webpack, {
+    staticAddonTestSupportTrees: true,
+    staticAddonTrees: true,
+    staticHelpers: true,
+    staticComponents: true,
+  });
 };

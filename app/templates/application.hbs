@@ -1,5 +1,11 @@
-{{!-- The following component displays Ember's default welcome message. --}}
-<WelcomePage />
-{{!-- Feel free to remove this! --}}
+<FormSelect
+  @hint="Select your country of residence"
+  @label="Country"
+  @options={{array "Mexico" "Canada" "USA"}}
+  @selected={{this.country}}
+  @onChange={{action (mut this.country)}} as |country|
+>
+  {{country}}
+</FormSelect>
 
 {{outlet}}
